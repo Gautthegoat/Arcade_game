@@ -9,10 +9,7 @@ client.connect(('78.193.131.98', 51900))
 
 #Variables liste
 nickname = input("Choose a nickname: ")
-x=10
-y=10
-nickname = [nickname,x,y]
-nicknames =[]
+class player
 
 #LANCEMENT PYGAME
 
