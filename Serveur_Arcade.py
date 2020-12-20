@@ -16,25 +16,42 @@ clients = []
 nicknames = []
 
 #Distribuer
-def broadcast (nicknames):
-	for client in clients:
-		client.send(nicknames)
+def broadcast (message):
+    for client in clients:
+        client.send(message)
 
+#Introduire client
+def handle(client):
+    while True:
+        try:
+            message = client.recv(1024)
+            broadcast(message)
+        except:
+            index = clients.index(client) #numéro dans liste
+            clients.remove(client)
+            client.close()
+            nickname = nicknames[index]
+            broadcast(f' {nickname} a quitte le tchat !'.encode('utf-8'))
+            nickname.remove(nickame)
+            break
 
 #Reception messages + distribution
 def receive():
-	while True:
-		client, address = server.accept()
-		clients.append(client)
+    while True:
+        client, address = server.accept()
+        print (f"Connecte with {str(address)}")
 
-		nickname = client.recv(1024).decode('utf-8')
-		nicknames = []
-		nicknames.append(nickname)
+        client.send('NICK'.encode('utf-8'))
+        nickname = client.recv(1024).decode('utf-8')
+        nicknames.append(nickname)
+        clients.append(client)
 
-		broadcast(nicknames)
+        print(f'Le nom du client est {nickname}!')
+        broadcast(f'{nickname} a rejoint le tchat!'.encode('utf-8'))
+        client.send('Connecte au server'.encode('utf-8'))
 
-		thread = threading.Thread(target=handle, args=(client,))
-		thread.start()
+        thread = threading.Thread(target=handle, args=(client,))
+        thread.start()
 
 print("Le serveur espionne...")
 receive()
